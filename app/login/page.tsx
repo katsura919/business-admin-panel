@@ -1,5 +1,7 @@
+'use client';
+
+import { useState } from "react";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -10,8 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLogin } from "@/hooks/useAuth";
 
 export default function LoginPage() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const login = useLogin();
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        login.mutate({ email, password });
+    };
+
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
             {/* Background gradient */}
@@ -27,36 +39,55 @@ export default function LoginPage() {
                             Enter your credentials to access your account
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="admin@example.com"
-                                className="h-10"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                <Link
-                                    href="#"
-                                    className="text-xs text-muted-foreground underline-offset-4 hover:underline hover:text-foreground transition-colors"
-                                >
-                                    Forgot password?
-                                </Link>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="admin@example.com"
+                                    className="h-10"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
                             </div>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                className="h-10"
-                            />
-                        </div>
-                        <Button className="w-full h-10" asChild>
-                            <Link href="/overview">Sign in</Link>
-                        </Button>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password">Password</Label>
+                                    <Link
+                                        href="#"
+                                        className="text-xs text-muted-foreground underline-offset-4 hover:underline hover:text-foreground transition-colors"
+                                    >
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="h-10"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            {login.isError && (
+                                <p className="text-sm text-destructive">
+                                    {login.error?.message || 'Invalid email or password'}
+                                </p>
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full h-10"
+                                disabled={login.isPending}
+                            >
+                                {login.isPending ? 'Signing in...' : 'Sign in'}
+                            </Button>
+                        </form>
                     </CardContent>
                 </Card>
 
