@@ -18,16 +18,6 @@ export default function LoginPage() {
             <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
 
             <div className="w-full max-w-sm space-y-6">
-                {/* Logo */}
-                <div className="flex flex-col items-center space-y-2 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                        <Building2 className="h-6 w-6" />
-                    </div>
-                    <h1 className="text-2xl font-bold tracking-tight">Business Admin</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Sign in to manage your businesses
-                    </p>
-                </div>
 
                 {/* Login Card */}
                 <Card className="border-border/50">

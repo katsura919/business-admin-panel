@@ -63,7 +63,6 @@ export function Topbar() {
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                             <Building2 className="h-4 w-4" />
                         </div>
-                        <span className="hidden sm:inline-block">Business Admin</span>
                     </Link>
 
                     <Separator orientation="vertical" className="h-6 hidden md:block" />
@@ -105,10 +104,6 @@ export function Topbar() {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-2">
-                    <Button size="sm" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        <span className="hidden sm:inline">Create Business</span>
-                    </Button>
 
                     <ModeToggle />
 
