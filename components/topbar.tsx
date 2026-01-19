@@ -32,6 +32,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "@/components/theme-toggle";
 import { currentUser } from "@/lib/data";
+import { useLogout } from "@/hooks/useAuth";
 
 const navigation = [
     { name: "Overview", href: "/overview", icon: Home },
@@ -51,6 +52,7 @@ function generateBreadcrumbs(pathname: string) {
 }
 
 export function Topbar() {
+    const logout = useLogout();
     const pathname = usePathname();
     const breadcrumbs = generateBreadcrumbs(pathname);
 
@@ -135,7 +137,7 @@ export function Topbar() {
                                 Settings
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">
+                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={logout}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Log out
                             </DropdownMenuItem>

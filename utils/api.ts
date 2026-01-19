@@ -35,8 +35,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            // Clear token and redirect to login
+        // Don't redirect on 401 for auth endpoints (login/register should handle their own errors)
+        const isAuthEndpoint = error.config?.url?.includes('/admin/login') ||
+            error.config?.url?.includes('/admin/register');
+
+        if (error.response?.status === 401 && !isAuthEndpoint) {
+            // Clear token and redirect to login only for non-auth endpoints
             if (typeof window !== 'undefined') {
                 document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
                 window.location.href = '/login';
