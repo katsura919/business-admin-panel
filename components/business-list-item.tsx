@@ -24,14 +24,14 @@ export function BusinessListItem({ business }: BusinessListItemProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                     <h3 className="font-semibold truncate">{business.name}</h3>
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p className="text-base text-muted-foreground truncate">
                         {business.description}
                     </p>
                 </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs text-muted-foreground hidden sm:block">
+                <span className="text-sm text-muted-foreground hidden sm:block">
                     {new Date(business.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",

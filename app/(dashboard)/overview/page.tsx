@@ -27,10 +27,10 @@ export default function OverviewPage() {
             {/* Page Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
                         Your Businesses
                     </h1>
-                    <p className="text-muted-foreground">
+                    <p className="text-lg text-muted-foreground">
                         Manage your businesses and their blog content.
                     </p>
                 </div>
@@ -95,10 +95,10 @@ export default function OverviewPage() {
                         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
                             <Plus className="h-10 w-10 text-muted-foreground" />
                         </div>
-                        <h3 className="mt-4 text-lg font-semibold">
+                        <h3 className="mt-4 text-xl font-semibold">
                             {searchQuery ? "No businesses found" : "No businesses yet"}
                         </h3>
-                        <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                        <p className="mb-4 mt-2 text-base text-muted-foreground">
                             {searchQuery
                                 ? "Try adjusting your search terms."
                                 : "Get started by creating your first business. You can add blog posts and manage content for each business."}

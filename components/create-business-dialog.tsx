@@ -113,7 +113,7 @@ export function CreateBusinessDialog({ open, onOpenChange }: CreateBusinessDialo
                                 disabled={isPending}
                                 required
                             />
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-sm text-muted-foreground">
                                 URL-friendly identifier for the business
                             </p>
                         </div>
@@ -123,7 +123,7 @@ export function CreateBusinessDialog({ open, onOpenChange }: CreateBusinessDialo
                                 id="description"
                                 placeholder="Brief description of your business..."
                                 value={description}
-                                onChange={(e:any) => setDescription(e.target.value)}
+                                onChange={(e: any) => setDescription(e.target.value)}
                                 disabled={isPending}
                                 rows={3}
                             />
