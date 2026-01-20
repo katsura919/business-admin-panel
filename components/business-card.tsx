@@ -16,7 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { type Business } from "@/lib/data";
+import { type Business } from "@/types/business.types";
 
 interface BusinessCardProps {
     business: Business;
@@ -75,12 +75,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
             </CardHeader>
             <CardContent className="space-y-4">
                 <CardDescription className="line-clamp-2 text-sm">
-                    {business.description}
+                    {business.description || "No description available"}
                 </CardDescription>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <FileText className="h-4 w-4" />
-                    <span>{business.blogCount} blog posts</span>
-                </div>
             </CardContent>
         </Card>
     );

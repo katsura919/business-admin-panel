@@ -9,7 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { type Business } from "@/lib/data";
+import { type Business } from "@/types/business.types";
 
 interface BusinessListItemProps {
     business: Business;
@@ -23,13 +23,7 @@ export function BusinessListItem({ business }: BusinessListItemProps) {
                     <Building2 className="h-5 w-5 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-3">
-                        <h3 className="font-semibold truncate">{business.name}</h3>
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-                            <FileText className="h-3 w-3" />
-                            {business.blogCount} posts
-                        </span>
-                    </div>
+                    <h3 className="font-semibold truncate">{business.name}</h3>
                     <p className="text-sm text-muted-foreground truncate">
                         {business.description}
                     </p>

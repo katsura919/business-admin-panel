@@ -1,20 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Grid3X3, List, Plus, Search } from "lucide-react";
+import { Grid3X3, List, Plus, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BusinessCard } from "@/components/business-card";
 import { BusinessListItem } from "@/components/business-list-item";
-import { businesses } from "@/lib/data";
+import { useBusinesses } from "@/hooks/useBusiness";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function OverviewPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [layout, setLayout] = useState<"grid" | "list">("grid");
 
+    const { data: businesses = [], isLoading, isError, error } = useBusinesses();
+
     const filteredBusinesses = businesses.filter((business) =>
         business.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        business.description.toLowerCase().includes(searchQuery.toLowerCase())
+        (business.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
     );
 
     return (
@@ -73,13 +76,13 @@ export default function OverviewPage() {
                 layout === "grid" ? (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {filteredBusinesses.map((business) => (
-                            <BusinessCard key={business.id} business={business} />
+                            <BusinessCard key={business._id} business={business} />
                         ))}
                     </div>
                 ) : (
                     <div className="flex flex-col gap-2">
                         {filteredBusinesses.map((business) => (
-                            <BusinessListItem key={business.id} business={business} />
+                            <BusinessListItem key={business._id} business={business} />
                         ))}
                     </div>
                 )
