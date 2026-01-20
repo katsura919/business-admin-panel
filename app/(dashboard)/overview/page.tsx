@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BusinessCard } from "@/components/business-card";
 import { BusinessListItem } from "@/components/business-list-item";
+import { CreateBusinessDialog } from "@/components/create-business-dialog";
 import { useBusinesses } from "@/hooks/useBusiness";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function OverviewPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [layout, setLayout] = useState<"grid" | "list">("grid");
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
     const { data: businesses = [], isLoading, isError, error } = useBusinesses();
 
@@ -32,7 +34,7 @@ export default function OverviewPage() {
                         Manage your businesses and their blog content.
                     </p>
                 </div>
-                <Button className="gap-2 w-fit">
+                <Button className="gap-2 w-fit" onClick={() => setIsCreateDialogOpen(true)}>
                     <Plus className="h-4 w-4" />
                     Create Business
                 </Button>
@@ -102,7 +104,7 @@ export default function OverviewPage() {
                                 : "Get started by creating your first business. You can add blog posts and manage content for each business."}
                         </p>
                         {!searchQuery && (
-                            <Button className="gap-2">
+                            <Button className="gap-2" onClick={() => setIsCreateDialogOpen(true)}>
                                 <Plus className="h-4 w-4" />
                                 Create Business
                             </Button>
@@ -110,6 +112,12 @@ export default function OverviewPage() {
                     </div>
                 </div>
             )}
+
+            {/* Create Business Dialog */}
+            <CreateBusinessDialog
+                open={isCreateDialogOpen}
+                onOpenChange={setIsCreateDialogOpen}
+            />
         </div>
     );
 }
