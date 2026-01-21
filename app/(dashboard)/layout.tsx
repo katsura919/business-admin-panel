@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useParams } from "next/navigation";
 import { Topbar } from "@/components/topbar";
+import { BusinessTopbar } from "@/components/business-topbar";
 import { useAdminStore } from "@/store/admin.store";
 import { useCurrentAdmin } from "@/hooks/useAuth";
+import { useBusinessById } from "@/hooks/useBusiness";
 import { Loader2 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -13,8 +15,17 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
   const { isAuthenticated, setAdmin, logout } = useAdminStore();
   const { data: admin, isLoading, isError } = useCurrentAdmin();
+
+  // Detect if we're on a business detail page
+  const isBusinessRoute = pathname.startsWith("/business/");
+  const businessId = isBusinessRoute ? (params.id as string) : undefined;
+
+  // Only fetch business data when on a business route
+  const { data: business } = useBusinessById(businessId || "");
 
   useEffect(() => {
     // If we have fresh admin data from API, update the store
@@ -51,7 +62,11 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <Topbar />
+      {isBusinessRoute && businessId ? (
+        <BusinessTopbar businessId={businessId} businessName={business?.name} />
+      ) : (
+        <Topbar />
+      )}
       <main className="container mx-auto px-4 py-6 md:px-6 md:py-8">
         {children}
       </main>

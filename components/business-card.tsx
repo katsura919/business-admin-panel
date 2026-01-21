@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Building2, ExternalLink, MoreVertical, Pencil, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,8 +25,21 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({ business }: BusinessCardProps) {
+    const router = useRouter();
+
+    const handleCardClick = () => {
+        router.push(`/business/${business._id}`);
+    };
+
+    const handleInteractiveClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     return (
-        <Card className="group relative transition-all hover:shadow-md hover:border-foreground/20">
+        <Card
+            className="group relative transition-all hover:shadow-md hover:border-foreground/20 cursor-pointer"
+            onClick={handleCardClick}
+        >
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -56,33 +70,35 @@ export function BusinessCard({ business }: BusinessCardProps) {
                             </p>
                         </div>
                     </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                                <MoreVertical className="h-4 w-4" />
-                                <span className="sr-only">Open menu</span>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                            <DropdownMenuItem>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div onClick={handleInteractiveClick}>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <MoreVertical className="h-4 w-4" />
+                                    <span className="sr-only">Open menu</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuItem>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -95,6 +111,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                        onClick={handleInteractiveClick}
                     >
                         <ExternalLink className="h-3 w-3" />
                         {business.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
