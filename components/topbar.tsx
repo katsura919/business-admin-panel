@@ -3,19 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Building2,
-  ChevronRight,
-  Home,
-  LogOut,
-  Plus,
-  Settings,
-  User,
-  Users,
-  Shield,
-} from "lucide-react";
+import { Building2, LogOut, Settings, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,49 +14,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "@/components/theme-toggle";
 import { useLogout } from "@/hooks/useAuth";
 import { useAdminStore } from "@/store/admin.store";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 // Base navigation items for all admins
 const baseNavigation = [
-  { name: "Overview", href: "/overview", icon: Home },
-  { name: "Businesses", href: "/businesses", icon: Building2 },
+  { name: "Overview", href: "/overview" },
 ];
 
 // Super-admin only navigation items
 const superAdminNavigation = [
-  { name: "Admins", href: "/admins", icon: Users },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Settings", href: "/settings" },
 ];
-
-function generateBreadcrumbs(pathname: string) {
-  const segments = pathname.split("/").filter(Boolean);
-
-  return segments.map((segment, index) => {
-    const href = "/" + segments.slice(0, index + 1).join("/");
-    const name =
-      segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
-    const isLast = index === segments.length - 1;
-
-    return { name, href, isLast };
-  });
-}
 
 export function Topbar() {
   const logout = useLogout();
   const pathname = usePathname();
-  const breadcrumbs = generateBreadcrumbs(pathname);
   const { admin, isSuperAdmin, getFullName, getInitials } = useAdminStore();
 
   // Build navigation based on role
@@ -76,59 +42,21 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center justify-between px-4 md:px-6">
-        {/* Left: Logo & Breadcrumb */}
-        <div className="flex items-center gap-4">
+      {/* Top Row: Logo, Title & Actions */}
+      <div className="flex h-12 items-center justify-between px-4 md:px-6">
+        {/* Left: Logo & Title */}
+        <div className="flex items-center gap-3">
           <Link
             href="/overview"
             className="flex items-center gap-2 font-semibold"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <Building2 className="h-4 w-4" />
             </div>
           </Link>
 
-          <Separator orientation="vertical" className="h-6 hidden md:block" />
-
-          <Breadcrumb className="hidden md:flex">
-            <BreadcrumbList>
-              {breadcrumbs.map((crumb, index) => (
-                <React.Fragment key={crumb.href}>
-                  {index > 0 && <BreadcrumbSeparator />}
-                  <BreadcrumbItem>
-                    {crumb.isLast ? (
-                      <BreadcrumbPage>{crumb.name}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink href={crumb.href}>
-                        {crumb.name}
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                </React.Fragment>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
+          <span className="text-lg font-medium text-foreground">Overview</span>
         </div>
-
-        {/* Center: Navigation */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {navigation.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(item.href + "/");
-            return (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  size="sm"
-                  className="gap-2"
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                </Button>
-              </Link>
-            );
-          })}
-        </nav>
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
@@ -136,8 +64,8 @@ export function Topbar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                <Avatar className="h-7 w-7">
                   <AvatarFallback className="text-xs">
                     {getInitials()}
                   </AvatarFallback>
@@ -189,6 +117,31 @@ export function Topbar() {
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Bottom Row: Navigation Tabs */}
+      <nav className="flex items-center gap-0 px-4 md:px-6 overflow-x-auto">
+        {navigation.map((item) => {
+          const isActive =
+            pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "relative px-3 py-2 text-sm transition-colors hover:text-foreground",
+                isActive
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              )}
+            >
+              {item.name}
+              {isActive && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground" />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
     </header>
   );
 }

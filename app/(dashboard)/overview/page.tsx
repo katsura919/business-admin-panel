@@ -42,27 +42,6 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6 bg-background">
-      {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Your Businesses
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Manage your businesses and their blog content.
-          </p>
-        </div>
-        {canCreateBusiness && (
-          <Button
-            className="gap-2 w-fit"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            <Plus className="h-4 w-4" />
-            Create Business
-          </Button>
-        )}
-      </div>
-
       {/* Show special empty state for admins with no business access */}
       {isAdminWithNoAccess ? (
         <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
@@ -86,17 +65,20 @@ export default function OverviewPage() {
         </div>
       ) : (
         <>
-          {/* Search and Layout Toggle */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative flex-1 max-w-md">
+          {/* Search, Layout Toggle & Create Button - Single Row */}
+          <div className="flex items-center gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search businesses..."
+                placeholder="Search Projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-background"
               />
             </div>
+
+            {/* Layout Toggle */}
             <div className="flex items-center gap-1 rounded-lg border bg-muted/30 p-1">
               <Button
                 variant={layout === "grid" ? "secondary" : "ghost"}
@@ -117,6 +99,16 @@ export default function OverviewPage() {
                 <span className="sr-only">List view</span>
               </Button>
             </div>
+
+            {/* Add New Button */}
+            {canCreateBusiness && (
+              <Button
+                className="gap-2"
+                onClick={() => setIsCreateDialogOpen(true)}
+              >
+                Add New...
+              </Button>
+            )}
           </div>
 
           {/* Business Grid/List */}

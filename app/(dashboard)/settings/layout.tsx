@@ -1,67 +1,66 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { UserPlus, Users, Shield } from "lucide-react";
+import { Users, Search } from "lucide-react";
 import { RequireSuperAdmin } from "@/components/auth/require-auth";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const settingsNavItems = [
   {
-    title: "Create Admin",
-    href: "/settings/create-admin",
-    icon: UserPlus,
-    description: "Add new administrators",
-  },
-  {
-    title: "Manage Admins",
-    href: "/settings/manage-admins",
-    icon: Users,
-    description: "Edit admin permissions",
+    title: "Team Members",
+    href: "/settings",
   },
 ];
 
 function SettingsLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredNavItems = settingsNavItems.filter((item) =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+    <div className="flex flex-col lg:flex-row gap-8">
       {/* Sidebar */}
-      <aside className="lg:w-64 lg:shrink-0">
-        <div className="sticky top-20">
-          <div className="flex items-center gap-2 mb-4">
-            <Shield className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Settings</h2>
+      <aside className="lg:w-56 shrink-0">
+        <div className="sticky top-20 space-y-4">
+          {/* Settings Title */}
+          <h1 className="text-2xl font-semibold">Settings</h1>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 bg-muted/30 border-muted"
+            />
           </div>
-          <nav className="flex flex-col gap-1">
-            {settingsNavItems.map((item) => {
-              const isActive = pathname === item.href;
+
+          {/* Navigation */}
+          <nav className="flex flex-col gap-0.5">
+            {filteredNavItems.map((item) => {
+              const isActive =
+                pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+                    "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">{item.title}</span>
-                    <span
-                      className={cn(
-                        "text-xs",
-                        isActive
-                          ? "text-primary-foreground/80"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {item.description}
-                    </span>
-                  </div>
+                  <Users className="h-4 w-4" />
+                  {item.title}
                 </Link>
               );
             })}
