@@ -1,19 +1,21 @@
-import type { Admin } from '@/types/admin.types';
+import type { Admin, AdminRole } from "@/types/admin.types";
 
 // Request/Response types
 export interface LoginRequest {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface LoginResponse {
-    token: string;
-    admin: Admin;
+  token: string;
+  admin: Admin;
 }
 
 export interface RegisterRequest {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role?: AdminRole;
+  businessIds?: string[];
 }
