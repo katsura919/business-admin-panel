@@ -33,10 +33,11 @@ export function BusinessTopbar({ businessId, businessName }: BusinessTopbarProps
     const { admin, isSuperAdmin, getFullName, getInitials } = useAdminStore();
     const { data: businesses = [] } = useBusinesses();
 
-    // Navigation items for business context - only Overview and Blog
+    // Navigation items for business context
     const businessNavigation = [
         { name: "Overview", href: `/business/${businessId}` },
         { name: "Blog", href: `/business/${businessId}/blog` },
+        { name: "Settings", href: `/business/${businessId}/settings` },
     ];
 
     const handleBusinessSwitch = (newBusinessId: string) => {
@@ -44,6 +45,8 @@ export function BusinessTopbar({ businessId, businessName }: BusinessTopbarProps
         const currentPath = pathname;
         if (currentPath.includes("/blog")) {
             router.push(`/business/${newBusinessId}/blog`);
+        } else if (currentPath.includes("/settings")) {
+            router.push(`/business/${newBusinessId}/settings`);
         } else {
             router.push(`/business/${newBusinessId}`);
         }
@@ -176,7 +179,7 @@ export function BusinessTopbar({ businessId, businessName }: BusinessTopbarProps
                 </div>
             </div>
 
-            {/* Bottom Row: Navigation Tabs - Overview and Blog only */}
+            {/* Bottom Row: Navigation Tabs */}
             <nav className="flex items-center gap-0 px-4 md:px-6 overflow-x-auto">
                 {businessNavigation.map((item) => {
                     // Exact match for Overview, startsWith for Blog
