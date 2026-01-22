@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/rich-text-editor";
 import {
     Select,
     SelectContent,
@@ -247,14 +248,17 @@ export default function CreateBlogPostPage() {
                                 {/* Content */}
                                 <div className="space-y-2">
                                     <Label htmlFor="content">Content *</Label>
-                                    <Textarea
-                                        id="content"
-                                        name="content"
+                                    <RichTextEditor
+                                        content={formData.content}
+                                        onChange={(content) => {
+                                            setFormData((prev) => ({ ...prev, content }));
+                                            if (errors.content) {
+                                                setErrors((prev) => ({ ...prev, content: "" }));
+                                            }
+                                        }}
                                         placeholder="Write your blog post content..."
-                                        value={formData.content}
-                                        onChange={handleChange}
                                         disabled={isSubmitting}
-                                        className={`min-h-[300px] ${errors.content ? "border-destructive" : ""}`}
+                                        className={errors.content ? "border-destructive" : ""}
                                     />
                                     {errors.content && (
                                         <p className="text-sm text-destructive">{errors.content}</p>
