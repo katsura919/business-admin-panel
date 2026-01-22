@@ -4,6 +4,7 @@ import type {
     CreateBusinessRequest,
     UpdateBusinessRequest,
     DeleteBusinessResponse,
+    UploadLogoResponse,
 } from '@/types/business.types';
 
 // Get all businesses
@@ -39,5 +40,18 @@ export const updateBusiness = async (id: string, data: UpdateBusinessRequest): P
 // Delete business (soft delete)
 export const deleteBusiness = async (id: string): Promise<DeleteBusinessResponse> => {
     const response = await api.delete<DeleteBusinessResponse>(`/businesses/${id}`);
+    return response.data;
+};
+
+// Upload business logo
+export const uploadBusinessLogo = async (id: string, file: File): Promise<UploadLogoResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post<UploadLogoResponse>(`/businesses/${id}/logo`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
     return response.data;
 };

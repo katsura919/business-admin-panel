@@ -35,3 +35,9 @@ export interface UpdateBusinessRequest {
 export interface DeleteBusinessResponse {
   message: string;
 }
+
+export interface UploadLogoResponse {
+  message: string;
+  logo: string;
+  business: Business;
+}

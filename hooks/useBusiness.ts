@@ -8,6 +8,7 @@ import {
     createBusiness,
     updateBusiness,
     deleteBusiness,
+    uploadBusinessLogo,
 } from '@/api/business/business';
 import type {
     Business,
@@ -107,6 +108,28 @@ export const useDeleteBusiness = () => {
         onError: (error: AxiosError<ApiError>) => {
             const message = error.response?.data?.error || error.response?.data?.message || 'Failed to delete business';
             toast.error('Deletion failed', {
+                description: message,
+            });
+        },
+    });
+};
+
+// Upload business logo
+export const useUploadBusinessLogo = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, file }: { id: string; file: File }) => uploadBusinessLogo(id, file),
+        onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: ['businesses'] });
+            queryClient.invalidateQueries({ queryKey: ['businesses', response.business._id] });
+            toast.success('Logo uploaded!', {
+                description: 'Business logo has been updated successfully.',
+            });
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            const message = error.response?.data?.error || error.response?.data?.message || 'Failed to upload logo';
+            toast.error('Upload failed', {
                 description: message,
             });
         },

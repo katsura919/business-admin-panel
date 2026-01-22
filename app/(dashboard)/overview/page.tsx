@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Grid3X3,
   List,
@@ -14,15 +15,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BusinessCard } from "@/components/business-card";
 import { BusinessListItem } from "@/components/business-list-item";
-import { CreateBusinessDialog } from "@/components/create-business-dialog";
 import { useBusinesses } from "@/hooks/useBusiness";
 import { useAdminStore } from "@/store/admin.store";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function OverviewPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [layout, setLayout] = useState<"grid" | "list">("grid");
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { data: businesses = [], isLoading, isError, error } = useBusinesses();
   const { isSuperAdmin } = useAdminStore();
@@ -39,6 +39,10 @@ export default function OverviewPage() {
 
   // Check if regular admin has no businesses assigned
   const isAdminWithNoAccess = !canCreateBusiness && businesses.length === 0;
+
+  const handleCreateBusiness = () => {
+    router.push("/create");
+  };
 
   return (
     <div className="space-y-6 bg-background">
@@ -104,7 +108,7 @@ export default function OverviewPage() {
             {canCreateBusiness && (
               <Button
                 className="gap-2"
-                onClick={() => setIsCreateDialogOpen(true)}
+                onClick={handleCreateBusiness}
               >
                 Add New...
               </Button>
@@ -144,7 +148,7 @@ export default function OverviewPage() {
                 {!searchQuery && canCreateBusiness && (
                   <Button
                     className="gap-2"
-                    onClick={() => setIsCreateDialogOpen(true)}
+                    onClick={handleCreateBusiness}
                   >
                     <Plus className="h-4 w-4" />
                     Create Business
@@ -154,14 +158,6 @@ export default function OverviewPage() {
             </div>
           )}
         </>
-      )}
-
-      {/* Create Business Dialog - Only render for super admins */}
-      {canCreateBusiness && (
-        <CreateBusinessDialog
-          open={isCreateDialogOpen}
-          onOpenChange={setIsCreateDialogOpen}
-        />
       )}
     </div>
   );
