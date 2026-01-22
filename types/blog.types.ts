@@ -42,3 +42,9 @@ export interface UpdateBlogRequest {
 export interface DeleteBlogResponse {
     message: string;
 }
+
+export interface UploadFeaturedImageResponse {
+    message: string;
+    featuredImage: string;
+    blog: Blog;
+}

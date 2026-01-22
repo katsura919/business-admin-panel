@@ -9,6 +9,7 @@ import {
     createBlog,
     updateBlog,
     deleteBlog,
+    uploadBlogFeaturedImage,
 } from '@/api/blog/blog';
 import type {
     Blog,
@@ -118,6 +119,28 @@ export const useDeleteBlog = () => {
         onError: (error: AxiosError<ApiError>) => {
             const message = error.response?.data?.error || error.response?.data?.message || 'Failed to delete blog';
             toast.error('Deletion failed', {
+                description: message,
+            });
+        },
+    });
+};
+
+// Upload blog featured image
+export const useUploadBlogFeaturedImage = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, file }: { id: string; file: File }) => uploadBlogFeaturedImage(id, file),
+        onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: ['blogs'] });
+            queryClient.invalidateQueries({ queryKey: ['blogs', response.blog._id] });
+            toast.success('Featured image uploaded!', {
+                description: 'Blog featured image has been updated successfully.',
+            });
+        },
+        onError: (error: AxiosError<ApiError>) => {
+            const message = error.response?.data?.error || error.response?.data?.message || 'Failed to upload featured image';
+            toast.error('Upload failed', {
                 description: message,
             });
         },

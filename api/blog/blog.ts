@@ -4,6 +4,7 @@ import type {
     CreateBlogRequest,
     UpdateBlogRequest,
     DeleteBlogResponse,
+    UploadFeaturedImageResponse,
 } from '@/types/blog.types';
 
 // Get all blogs (with optional filters)
@@ -45,5 +46,18 @@ export const updateBlog = async (id: string, data: UpdateBlogRequest): Promise<B
 // Delete blog (soft delete)
 export const deleteBlog = async (id: string): Promise<DeleteBlogResponse> => {
     const response = await api.delete<DeleteBlogResponse>(`/blogs/${id}`);
+    return response.data;
+};
+
+// Upload blog featured image
+export const uploadBlogFeaturedImage = async (id: string, file: File): Promise<UploadFeaturedImageResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post<UploadFeaturedImageResponse>(`/blogs/${id}/featured-image`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
     return response.data;
 };
