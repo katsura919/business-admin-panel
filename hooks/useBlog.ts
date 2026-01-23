@@ -13,6 +13,7 @@ import {
 } from '@/api/blog/blog';
 import type {
     Blog,
+    BlogQueryParams,
     CreateBlogRequest,
     UpdateBlogRequest,
 } from '@/types/blog.types';
@@ -31,16 +32,17 @@ export const useBlogs = (params?: { businessId?: string; status?: string }) => {
     });
 };
 
-// Get blogs by business ID
-export const useBlogsByBusiness = (businessId: string) => {
+// Get blogs by business ID with search, pagination, and filtering
+export const useBlogsByBusiness = (businessId: string, params?: BlogQueryParams) => {
     return useQuery({
-        queryKey: ['blogs', 'business', businessId],
-        queryFn: () => getBlogsByBusiness(businessId),
+        queryKey: ['blogs', 'business', businessId, params],
+        queryFn: () => getBlogsByBusiness(businessId, params),
         enabled: !!businessId,
         staleTime: 5 * 60 * 1000,
     });
 };
 
+;
 // Get blog by ID
 export const useBlogById = (id: string) => {
     return useQuery({
