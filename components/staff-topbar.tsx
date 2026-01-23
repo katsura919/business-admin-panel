@@ -21,8 +21,8 @@ import { cn } from "@/lib/utils";
 
 // Staff navigation items
 const navigation = [
-    { name: "Dashboard", href: "/staff/dashboard" },
-    { name: "Attendance History", href: "/staff/attendance" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Attendance History", href: "/attendance" },
 ];
 
 export function StaffTopbar() {
