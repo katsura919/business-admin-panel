@@ -1,13 +1,8 @@
-import api from '@/utils/api';
+import api, { setAuthToken } from '@/utils/api';
 import type { StaffLoginRequest, StaffLoginResponse, Staff } from '@/types/staff.types';
 
-// Cookie helper - set staff token in cookies
-export const setStaffAuthToken = (token: string) => {
-    // Set cookie with 7 days expiry
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    document.cookie = `staff_token=${token}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
-};
+// Re-export for backward compatibility (alias)
+export const setStaffAuthToken = setAuthToken;
 
 // API functions
 export const loginStaff = async (data: StaffLoginRequest): Promise<StaffLoginResponse> => {

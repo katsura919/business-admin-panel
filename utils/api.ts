@@ -10,16 +10,34 @@ const api = axios.create({
     },
 });
 
+// Helper to get cookie value
+const getCookie = (name: string): string | undefined => {
+    if (typeof window === 'undefined') return undefined;
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith(`${name}=`))
+        ?.split('=')[1];
+};
+
+// Helper to set cookie
+export const setAuthToken = (token: string) => {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + 7);
+    document.cookie = `auth_token=${token}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+};
+
+// Helper to clear auth token
+export const clearAuthToken = () => {
+    if (typeof window !== 'undefined') {
+        document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+};
+
 // Request interceptor to add bearer token
 api.interceptors.request.use(
     (config) => {
-        // Get token from cookies (client-side)
         if (typeof window !== 'undefined') {
-            const token = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('admin_token='))
-                ?.split('=')[1];
-
+            const token = getCookie('auth_token');
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
@@ -35,14 +53,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Don't redirect on 401 for auth endpoints (login/register should handle their own errors)
+        // Don't redirect on 401 for auth endpoints
         const isAuthEndpoint = error.config?.url?.includes('/admin/login') ||
-            error.config?.url?.includes('/admin/register');
+            error.config?.url?.includes('/admin/register') ||
+            error.config?.url?.includes('/staff/login');
 
         if (error.response?.status === 401 && !isAuthEndpoint) {
-            // Clear token and redirect to login only for non-auth endpoints
             if (typeof window !== 'undefined') {
-                document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                clearAuthToken();
                 window.location.href = '/login';
             }
         }

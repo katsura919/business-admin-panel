@@ -33,7 +33,7 @@ export const useStaffLogin = () => {
                 description: `Logged in as ${data.staff.firstName} ${data.staff.lastName}`,
             });
             // Redirect to staff dashboard
-            router.push('/staff/dashboard');
+            router.push('/dashboard');
         },
         onError: (error: AxiosError<ApiError>) => {
             const message = error.response?.data?.error || error.response?.data?.message || 'Invalid email or password';

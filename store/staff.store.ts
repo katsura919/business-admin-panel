@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Staff } from "@/types/staff.types";
+import { clearAuthToken } from "@/utils/api";
 
 interface StaffState {
     staff: Staff | null;
@@ -28,11 +29,7 @@ export const useStaffStore = create<StaffState>()(
             setStaff: (staff) => set({ staff, isAuthenticated: true }),
             setLoading: (isLoading) => set({ isLoading }),
             logout: () => {
-                // Clear cookie
-                if (typeof window !== "undefined") {
-                    document.cookie =
-                        "staff_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                }
+                clearAuthToken();
                 set({ staff: null, isAuthenticated: false });
             },
 

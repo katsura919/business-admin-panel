@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Admin } from "@/types/admin.types";
+import { clearAuthToken } from "@/utils/api";
 
 interface AdminState {
   admin: Admin | null;
@@ -29,11 +30,7 @@ export const useAdminStore = create<AdminState>()(
       setAdmin: (admin) => set({ admin, isAuthenticated: true }),
       setLoading: (isLoading) => set({ isLoading }),
       logout: () => {
-        // Clear cookie
-        if (typeof window !== "undefined") {
-          document.cookie =
-            "admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        }
+        clearAuthToken();
         set({ admin: null, isAuthenticated: false });
       },
 
