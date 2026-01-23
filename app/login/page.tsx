@@ -52,11 +52,37 @@ export default function LoginPage() {
 
             <div className="w-full max-w-3xl">
                 {/* Dual panel container */}
-                <div className="relative flex h-[480px] rounded-xl border border-border/50 bg-card shadow-lg overflow-hidden">
+                <div className="relative flex flex-col md:flex-row md:h-[480px] rounded-xl border border-border/50 bg-card shadow-lg overflow-hidden">
 
-                    {/* Sliding overlay panel */}
+                    {/* Mobile Toggle - visible only on mobile */}
+                    <div className="md:hidden flex border-b border-border/50">
+                        <button
+                            type="button"
+                            onClick={() => setMode('admin')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-colors ${mode === 'admin'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-card text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            <Shield className="w-4 h-4" />
+                            Admin
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setMode('staff')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-colors ${mode === 'staff'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-card text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            <Users className="w-4 h-4" />
+                            Staff
+                        </button>
+                    </div>
+
+                    {/* Sliding overlay panel - hidden on mobile */}
                     <div
-                        className={`absolute top-0 h-full w-1/2 bg-gradient-to-br from-primary/90 to-primary flex flex-col items-center justify-center p-8 transition-all duration-500 ease-in-out z-10 ${mode === 'admin' ? 'translate-x-full' : 'translate-x-0'
+                        className={`hidden md:flex absolute top-0 h-full w-1/2 bg-gradient-to-br from-primary/90 to-primary flex-col items-center justify-center p-8 transition-all duration-500 ease-in-out z-10 ${mode === 'admin' ? 'translate-x-full' : 'translate-x-0'
                             }`}
                     >
                         <div className="text-center text-primary-foreground">
@@ -68,8 +94,7 @@ export default function LoginPage() {
                                         Clock in, view your attendance, and manage your schedule
                                     </p>
                                     <Button
-                                        variant="outline"
-                                        className="border-primary-foreground/30 text-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                                        className="bg-card border-primary-foreground/30 text-primary hover:bg-card cursor-pointer"
                                         onClick={toggleMode}
                                     >
                                         Login as Staff
@@ -83,8 +108,7 @@ export default function LoginPage() {
                                         Manage businesses, staff, and view reports
                                     </p>
                                     <Button
-                                        variant="outline"
-                                        className="border-primary-foreground/30 text-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                                        className="bg-card border-primary-foreground/30 text-primary hover:bg-card cursor-pointer"
                                         onClick={toggleMode}
                                     >
                                         Login as Admin
@@ -94,13 +118,13 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Admin Login Form (Left side) */}
-                    <div className={`w-1/2 flex items-center justify-center p-8 transition-opacity duration-300 ${mode === 'admin' ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    {/* Admin Login Form (Left side on desktop, full width on mobile) */}
+                    <div className={`w-full md:w-1/2 flex items-center justify-center p-6 sm:p-8 transition-opacity duration-300 ${mode === 'admin' ? 'opacity-100' : 'opacity-0 pointer-events-none hidden md:flex'
                         }`}>
                         <div className="w-full max-w-sm space-y-6">
                             <div className="space-y-2 text-center">
                                 <Shield className="w-10 h-10 mx-auto text-primary" />
-                                <h1 className="text-2xl font-bold">Admin Login</h1>
+                                <h1 className="text-xl sm:text-2xl font-bold">Admin Login</h1>
                                 <p className="text-muted-foreground text-sm">
                                     Enter your credentials to access the dashboard
                                 </p>
@@ -112,7 +136,6 @@ export default function LoginPage() {
                                     <Input
                                         id="admin-email"
                                         type="email"
-                                        placeholder="admin@example.com"
                                         className="h-10"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -133,7 +156,6 @@ export default function LoginPage() {
                                         <Input
                                             id="admin-password"
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="••••••••"
                                             className="h-10 pr-10"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -165,13 +187,13 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Staff Login Form (Right side) */}
-                    <div className={`w-1/2 flex items-center justify-center p-8 transition-opacity duration-300 ${mode === 'staff' ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    {/* Staff Login Form (Right side on desktop, full width on mobile) */}
+                    <div className={`w-full md:w-1/2 flex items-center justify-center p-6 sm:p-8 transition-opacity duration-300 ${mode === 'staff' ? 'opacity-100' : 'opacity-0 pointer-events-none hidden md:flex'
                         }`}>
                         <div className="w-full max-w-sm space-y-6">
                             <div className="space-y-2 text-center">
                                 <Users className="w-10 h-10 mx-auto text-primary" />
-                                <h1 className="text-2xl font-bold">Staff Login</h1>
+                                <h1 className="text-xl sm:text-2xl font-bold">Staff Login</h1>
                                 <p className="text-muted-foreground text-sm">
                                     Clock in and manage your attendance
                                 </p>
@@ -183,7 +205,6 @@ export default function LoginPage() {
                                     <Input
                                         id="staff-email"
                                         type="email"
-                                        placeholder="staff@example.com"
                                         className="h-10"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -196,7 +217,6 @@ export default function LoginPage() {
                                         <Input
                                             id="staff-password"
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="••••••••"
                                             className="h-10 pr-10"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -222,7 +242,7 @@ export default function LoginPage() {
                                     className="w-full h-10"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? 'Signing in...' : 'Sign in as Staff'}
+                                    {isLoading ? 'Signing in...' : 'Sign in'}
                                 </Button>
                             </form>
                         </div>
@@ -230,7 +250,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Footer */}
-                <p className="text-center text-xs text-muted-foreground mt-6">
+                <p className="text-center text-xs text-muted-foreground mt-6 px-4">
                     By signing in, you agree to our{" "}
                     <Link href="#" className="underline underline-offset-4 hover:text-foreground">
                         Terms of Service
