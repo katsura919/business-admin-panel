@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 // Staff navigation items
 const navigation = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Attendance History", href: "/attendance" },
+    { name: "Attendance", href: "/attendance" },
 ];
 
 export function StaffTopbar() {

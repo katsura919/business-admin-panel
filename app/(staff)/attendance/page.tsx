@@ -15,13 +15,18 @@ export default function AttendanceHistoryPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
-    // Get attendance record for selected date
-    const selectedAttendance = useMemo(() => {
-        if (!selectedDate || !attendance) return null;
-        return attendance.find(record =>
+    // Get ALL attendance records for selected date (multiple clock in/out sessions)
+    const selectedAttendances = useMemo(() => {
+        if (!selectedDate || !attendance) return [];
+        return attendance.filter(record =>
             isSameDay(new Date(record.clockIn), selectedDate)
-        ) || null;
+        );
     }, [selectedDate, attendance]);
+
+    // Calculate total hours for selected day
+    const selectedDayTotal = useMemo(() => {
+        return selectedAttendances.reduce((sum, r) => sum + (r.hoursWorked || 0), 0);
+    }, [selectedAttendances]);
 
     // Get all dates that have attendance records
     const workedDates = useMemo(() => {
@@ -41,11 +46,13 @@ export default function AttendanceHistoryPage() {
             return isWithinInterval(recordDate, { start: monthStart, end: monthEnd });
         });
 
+        // Count unique days worked
+        const uniqueDays = new Set(monthRecords.map(r => format(new Date(r.clockIn), 'yyyy-MM-dd')));
         const totalHours = monthRecords.reduce((sum, r) => sum + (r.hoursWorked || 0), 0);
         const approved = monthRecords.filter(r => r.status === 'approved').length;
 
         return {
-            daysWorked: monthRecords.length,
+            daysWorked: uniqueDays.size,
             totalHours: Math.round(totalHours * 10) / 10,
             approved,
         };
@@ -85,7 +92,7 @@ export default function AttendanceHistoryPage() {
     };
 
     const formatDuration = (hours?: number) => {
-        if (!hours) return '-';
+        if (!hours) return '0m';
         const h = Math.floor(hours);
         const m = Math.round((hours % 1) * 60);
         return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -229,75 +236,95 @@ export default function AttendanceHistoryPage() {
 
             {/* Attendance Detail Modal */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="sm:max-w-md border-border/40 bg-background">
+                <DialogContent className="sm:max-w-lg border-border/40 bg-background">
                     <DialogHeader>
                         <DialogTitle className="text-lg font-semibold">
                             {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
                         </DialogTitle>
                     </DialogHeader>
 
-                    {selectedAttendance && (
-                        <div className="space-y-6 pt-2">
-                            {/* Status Badge */}
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">Status</span>
-                                {getStatusBadge(selectedAttendance.status)}
-                            </div>
-
-                            {/* Time Grid */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg bg-muted/50 border border-border/40">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Clock className="h-4 w-4 text-green-500" />
-                                        <span className="text-xs text-muted-foreground">Clock In</span>
-                                    </div>
-                                    <p className="text-lg font-semibold">
-                                        {format(new Date(selectedAttendance.clockIn), 'h:mm a')}
-                                    </p>
-                                </div>
-                                <div className="p-4 rounded-lg bg-muted/50 border border-border/40">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Clock className="h-4 w-4 text-red-500" />
-                                        <span className="text-xs text-muted-foreground">Clock Out</span>
-                                    </div>
-                                    <p className="text-lg font-semibold">
-                                        {selectedAttendance.clockOut
-                                            ? format(new Date(selectedAttendance.clockOut), 'h:mm a')
-                                            : '-'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Duration */}
+                    {selectedAttendances.length > 0 && (
+                        <div className="space-y-4">
+                            {/* Day Summary */}
                             <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Timer className="h-4 w-4 text-primary" />
-                                    <span className="text-xs text-muted-foreground">Total Duration</span>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Timer className="h-4 w-4 text-primary" />
+                                        <span className="text-sm text-muted-foreground">Total for day</span>
+                                    </div>
+                                    <p className="text-xl font-bold">{formatDuration(selectedDayTotal)}</p>
                                 </div>
-                                <p className="text-2xl font-bold">
-                                    {formatDuration(selectedAttendance.hoursWorked)}
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {selectedAttendances.length} session{selectedAttendances.length > 1 ? 's' : ''}
                                 </p>
                             </div>
 
-                            {/* Notes */}
-                            {selectedAttendance.notes && (
-                                <div className="space-y-2">
-                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your Notes</p>
-                                    <p className="text-sm p-3 rounded-lg bg-muted/30 border border-border/40">
-                                        {selectedAttendance.notes}
-                                    </p>
-                                </div>
-                            )}
+                            {/* Sessions List */}
+                            <div className="max-h-[400px] overflow-y-auto space-y-3">
+                                {selectedAttendances.map((record, index) => (
+                                    <div
+                                        key={record._id}
+                                        className="p-4 rounded-lg bg-muted/30 border border-border/40 space-y-3"
+                                    >
+                                        {/* Session Header */}
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium">
+                                                Session {index + 1}
+                                            </span>
+                                            {getStatusBadge(record.status)}
+                                        </div>
 
-                            {/* Admin Notes */}
-                            {selectedAttendance.adminNotes && (
-                                <div className="space-y-2">
-                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Admin Feedback</p>
-                                    <p className="text-sm p-3 rounded-lg bg-muted/30 border border-border/40">
-                                        {selectedAttendance.adminNotes}
-                                    </p>
-                                </div>
-                            )}
+                                        {/* Time Grid */}
+                                        <div className="grid grid-cols-3 gap-3 text-sm">
+                                            <div>
+                                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                    <Clock className="h-3 w-3 text-green-500" />
+                                                    In
+                                                </p>
+                                                <p className="font-medium">
+                                                    {format(new Date(record.clockIn), 'h:mm a')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                    <Clock className="h-3 w-3 text-red-500" />
+                                                    Out
+                                                </p>
+                                                <p className="font-medium">
+                                                    {record.clockOut
+                                                        ? format(new Date(record.clockOut), 'h:mm a')
+                                                        : '-'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                    <Timer className="h-3 w-3" />
+                                                    Duration
+                                                </p>
+                                                <p className="font-medium">
+                                                    {formatDuration(record.hoursWorked)}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Notes */}
+                                        {record.notes && (
+                                            <div className="pt-2 border-t border-border/40">
+                                                <p className="text-xs text-muted-foreground">Notes</p>
+                                                <p className="text-sm mt-1">{record.notes}</p>
+                                            </div>
+                                        )}
+
+                                        {/* Admin Notes */}
+                                        {record.adminNotes && (
+                                            <div className="pt-2 border-t border-border/40">
+                                                <p className="text-xs text-muted-foreground">Admin Feedback</p>
+                                                <p className="text-sm mt-1">{record.adminNotes}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </DialogContent>
