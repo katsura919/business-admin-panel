@@ -35,9 +35,10 @@ export function BusinessTopbar({ businessId, businessName }: BusinessTopbarProps
 
     // Navigation items for business context
     const businessNavigation = [
-        { name: "Overview", href: `/business/${businessId}` },
-        { name: "Blog", href: `/business/${businessId}/blog` },
-        { name: "Settings", href: `/business/${businessId}/settings` },
+      { name: "Overview", href: `/business/${businessId}` },
+      { name: "Blog", href: `/business/${businessId}/blog` },
+      { name: "Staff", href: `/business/${businessId}/staff` },
+      { name: "Settings", href: `/business/${businessId}/settings` },
     ];
 
     const handleBusinessSwitch = (newBusinessId: string) => {
@@ -47,8 +48,10 @@ export function BusinessTopbar({ businessId, businessName }: BusinessTopbarProps
             router.push(`/business/${newBusinessId}/blog`);
         } else if (currentPath.includes("/settings")) {
             router.push(`/business/${newBusinessId}/settings`);
+        } else if (currentPath.includes("/staff")) {
+            router.push(`/business/${newBusinessId}/staff`);
         } else {
-            router.push(`/business/${newBusinessId}`);
+            router.push(`/business/${newBusinessId}/staff`);
         }
     };
 
