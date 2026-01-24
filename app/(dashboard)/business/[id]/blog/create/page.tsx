@@ -2,14 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Loader2,
-  Save,
-  Upload,
-  X,
-  Image as ImageIcon,
-} from "lucide-react";
+import { ArrowLeft, Loader2, Save, X, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,13 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { useCreateBlog, useUploadBlogFeaturedImage } from "@/hooks/useBlog";
 import { useBusinessById } from "@/hooks/useBusiness";
 import type { BlogStatus } from "@/types/blog.types";
@@ -202,162 +190,166 @@ export default function CreateBlogPostPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href={`/business/${businessId}/blog`}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
+    <div className="h-[calc(100vh-80px)] flex flex-col">
+      {/* Header with Actions - Fixed */}
+      <div className="flex items-center justify-between gap-4 pb-4 border-b mb-4 flex-shrink-0">
+        <div className="flex items-center gap-4">
+          <Link href={`/business/${businessId}/blog`}>
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold">Create New Post</h1>
+            <p className="text-sm text-muted-foreground">
+              Create a new blog post for {business?.name || "this business"}
+            </p>
+          </div>
+        </div>
+
+        {/* Publish Actions - Top Right */}
+        <div className="flex items-center gap-2">
+          <Select
+            value={formData.status}
+            onValueChange={handleStatusChange}
+            disabled={isSubmitting}
+          >
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="gap-2"
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {createBlog.isPending ? "Creating..." : "Uploading Image..."}
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                {formData.status === "published" ? "Publish" : "Save Draft"}
+              </>
+            )}
           </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold">Create New Post</h1>
-          <p className="text-sm text-muted-foreground">
-            Create a new blog post for {business?.name || "this business"}
-          </p>
         </div>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Post Details</CardTitle>
-                <CardDescription>
-                  Enter the main content for your blog post
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Title */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    placeholder="Enter post title"
-                    value={formData.title}
-                    onChange={handleTitleChange}
-                    disabled={isSubmitting}
-                    className={errors.title ? "border-destructive" : ""}
-                  />
-                  {errors.title && (
-                    <p className="text-sm text-destructive">{errors.title}</p>
+      {/* Form - Scrollable Content */}
+      <form onSubmit={handleSubmit} className="flex-1 ">
+        <div className="mx-auto max-w-6xl pb-10">
+          {/* Two Column Layout */}
+          <div className="grid gap-6 lg:grid-cols-4">
+            {/* Main Content - Left Column */}
+            <div className="lg:col-span-3 space-y-4">
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="Enter post title"
+                  value={formData.title}
+                  onChange={handleTitleChange}
+                  disabled={isSubmitting}
+                  className={cn(
+                    "text-lg",
+                    errors.title ? "border-destructive" : "",
                   )}
-                </div>
+                />
+                {errors.title && (
+                  <p className="text-sm text-destructive">{errors.title}</p>
+                )}
+              </div>
 
-                {/* Slug */}
-                <div className="space-y-2">
-                  <Label htmlFor="slug">Slug *</Label>
-                  <Input
-                    id="slug"
-                    name="slug"
-                    placeholder="post-url-slug"
-                    value={formData.slug}
-                    onChange={handleChange}
-                    disabled={isSubmitting}
-                    className={errors.slug ? "border-destructive" : ""}
-                  />
-                  {errors.slug && (
-                    <p className="text-sm text-destructive">{errors.slug}</p>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    Lowercase letters, numbers, and hyphens only
-                  </p>
-                </div>
+              {/* Slug */}
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug *</Label>
+                <Input
+                  id="slug"
+                  name="slug"
+                  placeholder="post-url-slug"
+                  value={formData.slug}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className={errors.slug ? "border-destructive" : ""}
+                />
+                {errors.slug && (
+                  <p className="text-sm text-destructive">{errors.slug}</p>
+                )}
+              </div>
 
-                {/* Content */}
-                <div className="space-y-2">
-                  <Label htmlFor="content">Content *</Label>
-                  <RichTextEditor
-                    content={formData.content}
-                    onChange={(content) => {
-                      setFormData((prev) => ({ ...prev, content }));
-                      if (errors.content) {
-                        setErrors((prev) => ({ ...prev, content: "" }));
-                      }
-                    }}
-                    placeholder="Write your blog post content..."
-                    disabled={isSubmitting}
-                    className={errors.content ? "border-destructive" : ""}
-                  />
-                  {errors.content && (
-                    <p className="text-sm text-destructive">{errors.content}</p>
-                  )}
-                </div>
+              {/* Content Editor */}
+              <div className="space-y-2">
+                <Label htmlFor="content">Content *</Label>
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(content) => {
+                    setFormData((prev) => ({ ...prev, content }));
+                    if (errors.content) {
+                      setErrors((prev) => ({ ...prev, content: "" }));
+                    }
+                  }}
+                  placeholder="Write your blog post content..."
+                  disabled={isSubmitting}
+                  className={errors.content ? "border-destructive" : ""}
+                />
+                {errors.content && (
+                  <p className="text-sm text-destructive">{errors.content}</p>
+                )}
+              </div>
 
-                {/* Excerpt */}
-                <div className="space-y-2">
-                  <Label htmlFor="excerpt">Excerpt</Label>
-                  <Textarea
-                    id="excerpt"
-                    name="excerpt"
-                    placeholder="Short summary of the post (optional)"
-                    value={formData.excerpt}
-                    onChange={handleChange}
-                    disabled={isSubmitting}
-                    className="min-h-[100px]"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    A brief description shown in post listings
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              {/* Excerpt */}
+              <div className="space-y-2">
+                <Label htmlFor="excerpt">Excerpt</Label>
+                <Textarea
+                  id="excerpt"
+                  name="excerpt"
+                  placeholder="Short summary of the post (optional)"
+                  value={formData.excerpt}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="min-h-[80px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  A brief description shown in post listings
+                </p>
+              </div>
+            </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Publish Settings */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Publish Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Status */}
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={handleStatusChange}
-                    disabled={isSubmitting}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {formData.status === "published"
-                      ? "This post will be visible immediately"
-                      : "Save as draft to publish later"}
-                  </p>
-                </div>
-
-                {/* Category */}
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+            {/* Sidebar - Right Column */}
+            <div className="space-y-4">
+              {/* Category */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Category</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Input
                     id="category"
                     name="category"
-                    placeholder="e.g., News, Tutorial, Announcement"
+                    placeholder="e.g., News, Tutorial"
                     value={formData.category}
                     onChange={handleChange}
                     disabled={isSubmitting}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Optional category for organizing posts
-                  </p>
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* Featured Image Upload */}
-                <div className="space-y-2">
-                  <Label>Featured Image</Label>
+              {/* Featured Image */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Featured Image</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-3">
                     {/* Image Preview */}
                     <div
@@ -393,19 +385,6 @@ export default function CreateBlogPostPage() {
                       )}
                     </div>
 
-                    {/* Upload Button */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isSubmitting}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      {featuredImageFile ? "Change Image" : "Upload Image"}
-                    </Button>
-
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -424,51 +403,9 @@ export default function CreateBlogPostPage() {
                       JPEG, PNG, WebP or GIF. Max 5MB.
                     </p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Actions */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        {createBlog.isPending
-                          ? "Creating..."
-                          : "Uploading Image..."}
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4" />
-                        {formData.status === "published"
-                          ? "Publish"
-                          : "Save Draft"}
-                      </>
-                    )}
-                  </Button>
-                  <Link
-                    href={`/business/${businessId}/blog`}
-                    className="w-full"
-                  >
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      disabled={isSubmitting}
-                    >
-                      Cancel
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </form>
