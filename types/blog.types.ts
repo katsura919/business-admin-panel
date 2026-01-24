@@ -9,6 +9,7 @@ export interface Blog {
   content: string;
   excerpt?: string;
   featuredImage?: string;
+  category?: string;
   businessId: string;
   authorId: string;
   status: BlogStatus;
@@ -37,6 +38,7 @@ export interface BlogQueryParams {
   page?: number;
   limit?: number;
   status?: "draft" | "published" | "all";
+  category?: string;
 }
 
 export interface CreateBlogRequest {
@@ -45,6 +47,7 @@ export interface CreateBlogRequest {
   content: string;
   excerpt?: string;
   featuredImage?: string;
+  category?: string;
   businessId: string;
   status?: BlogStatus;
   isActive?: boolean;
@@ -56,6 +59,7 @@ export interface UpdateBlogRequest {
   content?: string;
   excerpt?: string;
   featuredImage?: string;
+  category?: string;
   status?: BlogStatus;
   isActive?: boolean;
 }

@@ -13,6 +13,7 @@ import type {
 export const getAllBlogs = async (params?: {
   businessId?: string;
   status?: string;
+  category?: string;
 }): Promise<Blog[]> => {
   const response = await api.get<Blog[]>("/blogs", { params });
   return response.data;
@@ -43,6 +44,7 @@ export const getBlogsByBusiness = async (
         page: params?.page?.toString() || "1",
         limit: params?.limit?.toString() || "10",
         status: params?.status || "all",
+        category: params?.category || undefined,
       },
     },
   );
